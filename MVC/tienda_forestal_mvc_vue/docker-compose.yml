@@ -1,0 +1,43 @@
+version: "3.9" #Declaramos la version de la especificacion del archivo compose
+               #en las versiones actualizadas de docker no es necesario, ya que 
+               #lo detecta automaticamente.
+
+services:
+  #Desplegamos los servicios de la base de datos MySQL
+  db:
+    image: mysql:8.0
+    container_name: tienda_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: iesmariamoliner
+      MYSQL_DATABASE: tienda_forestal
+      MYSQL_USER: mopii
+      MYSQL_PASSWORD: daw
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+
+  #Desplegamos los servicios del backend en Flask
+  backend:
+    build: ./backend
+    container_name: tienda_backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      - FLASK_ENV=development
+      - MYSQL_HOST=db
+      - MYSQL_USER=mopii
+      - MYSQL_PASSWORD=daw
+      - MYSQL_DB=tienda_forestal
+
+  frontend:
+    build: ./frontend
+    container_name: tienda_frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+
