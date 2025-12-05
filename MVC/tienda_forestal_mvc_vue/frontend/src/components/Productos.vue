@@ -15,13 +15,8 @@
     <!-- ===============================
          BÚSQUEDA GENERAL (campo + botón)
          =============================== -->
-    <input
-      type="text"
-      v-model="terminoBusqueda"
-      placeholder="Buscar por nombre, tipo o marca"
-      @keyup.enter="accionBuscar"
-      class="search-input"
-    />
+    <input type="text" v-model="terminoBusqueda" placeholder="Buscar por nombre, tipo o marca"
+      @keyup.enter="accionBuscar" class="search-input" />
     <button @click="accionBuscar">Buscar</button>
 
     <!-- ===============================
@@ -68,12 +63,7 @@
         Anterior
       </button>
 
-      <button
-        v-for="n in totalPaginas"
-        :key="n"
-        @click="cambiarPagina(n)"
-        :class="{ activo: n === paginaActual }"
-      >
+      <button v-for="n in totalPaginas" :key="n" @click="cambiarPagina(n)" :class="{ activo: n === paginaActual }">
         {{ n }}
       </button>
 
@@ -238,7 +228,7 @@ cargarProductos()
   background: white;
   padding: 1rem;
   border-radius: 10px;
-  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .card img {
