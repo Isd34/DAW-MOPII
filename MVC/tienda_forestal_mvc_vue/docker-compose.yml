@@ -8,7 +8,7 @@ services:
   backend:
     build: ./backend
     container_name: tienda_flask_backend
-    restart: always
+    restart: no
     ports:
       - "5000:5000"
     environment:
@@ -30,7 +30,7 @@ services:
   frontend:
     build: ./frontend
     container_name: tienda_vue_frontend
-    restart: always
+    restart: no
     ports:
  #    - "8080:8080"
       - "8080:80"
@@ -41,7 +41,7 @@ services:
   db:
     image: mysql:8.0
     container_name: tienda_mysql_db
-    restart: always
+    restart: no 
     environment:
       MYSQL_ROOT_PASSWORD: iesmariamoliner
       MYSQL_DATABASE: tienda_forestal
@@ -58,7 +58,7 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: phpmyadmin_web
-    restart: always
+    restart: no
     ports:
       - "8081:80"     # Acceso desde http://localhost:8081 
                       # login:
