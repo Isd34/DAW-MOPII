@@ -127,7 +127,7 @@ def filtrar():
     """
     GET /productos/filtrar?tipo=&marca=&precio_min=&precio_max=&ordenar=&pagina=&por_pagina=
     Devuelve objeto con:
-      productos, total_resultados, pagina_actual, total_paginas
+    productos, total_resultados, pagina_actual, total_paginas
     """
     # parseo seguro de parámetros numéricos
     def to_int(val, default):
