@@ -1,36 +1,48 @@
-<!-- src/components/ProductosView.vue -->
 <template>
-  <div class="productos">
-    <h2>Catálogo de productos</h2>
+  <div class="productos-view">
 
-    <!-- =========================
-         BUSCADOR
-         ========================= -->
-    <input
-      type="text"
-      v-model="termino"
-      placeholder="Buscar producto..."
-      @keyup.enter="onBuscar"
-    />
-    <button @click="onBuscar">Buscar</button>
+    <!-- ===============================
+         TÍTULO
+         =============================== -->
+    <h2>Catálogo de Productos (MVP)</h2>
 
-    <!-- =========================
-         ESTADOS
-         ========================= -->
-    <p v-if="loading">Cargando productos...</p>
-    <p v-if="error" class="error">{{ error }}</p>
+    <!-- ===============================
+         BÚSQUEDA
+         =============================== -->
+    <div class="busqueda">
+      <input
+        type="text"
+        v-model="terminoBusqueda"
+        placeholder="Buscar productos..."
+      />
+      <button @click="buscar">Buscar</button>
+    </div>
 
-    <!-- =========================
-         LISTADO
-         ========================= -->
-    <div class="grid" v-if="!loading && productos.length">
+    <!-- ===============================
+         FILTROS
+         =============================== -->
+    <div class="filtros">
+        <input v-model="filtroMarca" placeholder="Marca">
+        <input v-model="filtroTipo" placeholder="Tipo">
+        <button @click="buscar">Aplicar filtros</button>
+    </div>
+
+    <!-- ===============================
+         LISTADO DE PRODUCTOS
+         =============================== -->
+    <div v-if="loading" class="loading">
+      Cargando productos...
+    </div>
+
+    <div v-else class="grid">
       <div
-        class="card"
         v-for="producto in productos"
         :key="producto.id"
+        class="card"
       >
+        <!-- Imagen del producto -->
         <img
-          :src="`/img/${producto.imagen}`"
+          :src="getImagen(producto.imagen)"
           :alt="producto.nombre"
         />
 
@@ -40,47 +52,115 @@
       </div>
     </div>
 
-    <p v-if="!loading && productos.length === 0">
-      No hay productos para mostrar
-    </p>
+    <!-- ===============================
+         PAGINACIÓN
+         =============================== -->
+    <div class="paginacion" v-if="totalPaginas > 1">
+
+      <button
+        @click="paginaAnterior"
+        :disabled="paginaActual === 1"
+      >
+        Anterior
+      </button>
+
+      <span>
+        Página {{ paginaActual }} de {{ totalPaginas }}
+      </span>
+
+      <button
+        @click="paginaSiguiente"
+        :disabled="paginaActual === totalPaginas"
+      >
+        Siguiente
+      </button>
+
+    </div>
+
   </div>
 </template>
 
 <script setup>
-// ===================================================
-// VIEW (MVP)
-// Solo se encarga de mostrar datos y reaccionar a eventos
-// ===================================================
+/*
+=================================================
+IMPORTS
+=================================================
+*/
+import { onMounted } from 'vue'
+import ProductsPresenter from '@/presenters/ProductsPresenter'
 
-import { ref, onMounted } from 'vue'
-import ProductsPresenter from '@/presenters/ProductsPresenter.js'
+/*
+=================================================
+PRESENTER
+=================================================
+Creamos el Presenter.
+La View NO sabe cómo se cargan los datos,
+solo usa lo que el Presenter expone.
+*/
+const presenter = ProductsPresenter()
 
-// Instanciamos el Presenter
+/*
+=================================================
+DESTRUCTURING
+=================================================
+Extraemos solo lo que la View necesita.
+Esto refuerza la separación MVP.
+*/
 const {
   productos,
   loading,
-  error,
+  terminoBusqueda,
+  filtroMarca,
+  filtroTipo,
+  paginaActual,
+  totalPaginas,
   cargarProductos,
-  buscar
-} = ProductsPresenter()
+  buscarProductos,
+  paginaSiguiente,
+  paginaAnterior
+} = presenter
 
-// Estado local de la vista
-const termino = ref('')
-
-// Eventos
-const onBuscar = () => {
-  buscar(termino.value)
+/*
+=================================================
+EVENTOS DE LA VIEW
+=================================================
+*/
+const buscar = () => {
+  buscarProductos()
 }
 
-// Carga inicial
+/*
+=================================================
+IMÁGENES
+=================================================
+La View decide cómo mostrar las imágenes.
+No es responsabilidad del Presenter ni del backend.
+*/
+const getImagen = (nombreImagen) => {
+  return new URL(`../assets/img/${nombreImagen}`, import.meta.url).href
+}
+
+/*
+=================================================
+CICLO DE VIDA
+=================================================
+Al montar la vista, pedimos al Presenter
+que cargue los productos.
+*/
 onMounted(() => {
   cargarProductos()
 })
 </script>
 
 <style scoped>
-.productos {
+.productos-view {
   padding: 1rem;
+}
+
+.busqueda {
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 0.5rem;
 }
 
 .grid {
@@ -92,7 +172,7 @@ onMounted(() => {
 .card {
   background: #fff;
   padding: 1rem;
-  border-radius: 10px;
+  border-radius: 8px;
   box-shadow: 0 0 5px rgba(0,0,0,0.1);
 }
 
@@ -102,9 +182,15 @@ onMounted(() => {
   object-fit: cover;
 }
 
-.error {
-  color: red;
-  font-weight: bold;
+.paginacion {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.loading {
+  font-style: italic;
 }
 </style>
 

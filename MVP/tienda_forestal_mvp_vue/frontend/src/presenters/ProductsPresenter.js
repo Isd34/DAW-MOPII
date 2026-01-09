@@ -1,80 +1,104 @@
-// src/presenters/ProductsPresenter.js
-// ===================================================
-// PRESENTER (MVP)
-// Orquesta la lógica entre la View y la API
-//
-// Actúa como "cerebro" del frontend MVP.
-// - Gestiona estado
-// - Habla con la API
-// - Expone métodos que la Vista utiliza
-//
-// El Presenter es un servicio de lógica reutilizable, no un componente visual. 
-// ===================================================
-
 import { ref } from 'vue'
-import { getProductos, buscarProductos } from '@/services/api.js'
+import { obtenerProductos } from '@/services/api'
 
 export default function ProductsPresenter() {
-  // ---------------------------
-  // Estado (reactivo)
-  // ---------------------------
+
+  /*
+  =============================================
+  ESTADO (State)
+  =============================================
+  */
   const productos = ref([])
   const loading = ref(false)
-  const error = ref(null)
 
-  // ---------------------------
-  // Casos de uso
-  // ---------------------------
+  // Búsqueda y filtros
+  const terminoBusqueda = ref('')
+  const filtroMarca = ref('')
+  const filtroTipo = ref('')
 
-  /**
-   * Cargar todos los productos
-   */
+  // Paginación
+  const paginaActual = ref(1)
+  const porPagina = ref(6)
+  const totalPaginas = ref(1)
+
+  /*
+  =============================================
+  FUNCIÓN CENTRAL
+  =============================================
+  */
   const cargarProductos = async () => {
     loading.value = true
-    error.value = null
 
-    try {
-      const data = await getProductos()
-      productos.value = data.productos ?? data
-    } catch (err) {
-      console.error(err)
-      error.value = 'Error al cargar productos'
-    } finally {
-      loading.value = false
+    const params = {
+      pagina: paginaActual.value,
+      por_pagina: porPagina.value,
     }
-  }
 
-  /**
-   * Buscar productos por término
-   */
-  const buscar = async (termino) => {
-    loading.value = true
-    error.value = null
+    if (terminoBusqueda.value) params.termino = terminoBusqueda.value
+    if (filtroMarca.value) params.marca = filtroMarca.value
+    if (filtroTipo.value) params.tipo = filtroTipo.value
 
     try {
-      if (!termino || termino.trim() === '') {
-        await cargarProductos()
-      } else {
-        const data = await buscarProductos(termino)
-        productos.value = data.productos ?? data
+      const data = await obtenerProductos(params)
+
+      /*
+      El backend puede devolver:
+      {
+        productos: [],
+        total_paginas: X
       }
-    } catch (err) {
-      console.error(err)
-      error.value = 'Error en la búsqueda'
+      */
+      productos.value = data.productos ?? data
+      totalPaginas.value = data.total_paginas ?? 1
+
+    } catch (error) {
+      console.error('Error cargando productos', error)
     } finally {
       loading.value = false
     }
   }
 
-  // ---------------------------
-  // API pública del Presenter
-  // ---------------------------
+  /*
+  =============================================
+  ACCIONES DEL USUARIO
+  =============================================
+  */
+  const buscarProductos = () => {
+    paginaActual.value = 1
+    cargarProductos()
+  }
+
+  const paginaSiguiente = () => {
+    if (paginaActual.value < totalPaginas.value) {
+      paginaActual.value++
+      cargarProductos()
+    }
+  }
+
+  const paginaAnterior = () => {
+    if (paginaActual.value > 1) {
+      paginaActual.value--
+      cargarProductos()
+    }
+  }
+
+  /*
+  =============================================
+  API DEL PRESENTER
+  =============================================
+  */
   return {
     productos,
     loading,
-    error,
+    terminoBusqueda,
+    filtroMarca,
+    filtroTipo,
+    paginaActual,
+    totalPaginas,
     cargarProductos,
-    buscar
+    buscarProductos,
+    paginaSiguiente,
+    paginaAnterior,
   }
 }
 
