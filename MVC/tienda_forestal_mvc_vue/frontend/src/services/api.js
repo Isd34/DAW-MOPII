@@ -95,3 +95,26 @@ export async function eliminarProducto(id) {
   const res = await axios.delete(`/api/productos/${id}`);
   return res.data;
 }
+
+
+/**
+ * Función que elimina los productos filtrados
+ * Ejercicio con fecha 14/01/2026
+ * También añadido un Try-Catch
+ */
+export async function eliminarProductosFiltrados(params = {}) {
+  try {
+    const query = new URLSearchParams();
+
+    for (const [key, value] of Object.entries(params)) {
+      if (value !== null && value !== undefined && value !== "")
+        query.append(key, value);
+    }
+
+    const res = await axios.delete(`/api/productos/filtrar?${query.toString()}`);
+    return res.data; // devuelve { productos, total_resultados, pagina_actual, total_paginas }
+  } catch (error) {
+    console.error('Error al eliminar productos:', error);
+    throw error;
+  }
+}
