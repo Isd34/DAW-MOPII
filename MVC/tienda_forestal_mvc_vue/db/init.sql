@@ -1,3 +1,7 @@
+-- Configurar encoding UTF-8 para soportar acentos y caracteres especiales
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
+
 CREATE TABLE productos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -7,7 +11,7 @@ CREATE TABLE productos (
     precio DECIMAL(10,2),
     stock INT,
     imagen VARCHAR(255)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO productos (nombre, tipo, marca, descripcion, precio, stock, imagen) VALUES
 ('Motosierra Stihl MS 180', 'motosierra', 'Stihl', 'Motosierra ligera para trabajos forestales básicos', 299.99, 12, 'motosierra_stihl_ms180.jpg'),
@@ -40,5 +44,15 @@ INSERT INTO productos (nombre, tipo, marca, descripcion, precio, stock, imagen) 
 ('Hacha Husqvarna X-Cut X162', 'hacha', 'Husqvarna', 'Hacha profesional de talá-intermedia', 69.00, 28, 'hacha_husqvarna_xcut_x162.jpg'),
 ('Maza Stanley FatMax FME-MFM18XB-1', 'maza', 'Stanley', 'Maza profesional para uso forestal con mango de fibra', 79.90, 20, 'maza_stanley_fatmax_fmemfm18xb1.jpg'),
 ('Casco Forestal Husqvarna Technical XR', 'accesorio', 'Husqvarna', 'Casco técnico con protección para tala intensiva', 99.90, 15, 'casco_husqvarna_technical_xr.jpg'),
-('Kit Limpieza Motosierra Stihl Premium', 'accesorio', 'Stihl', 'Kit de limpieza y mantenimiento para motosierra', 39.00, 30, 'kit_limpieza_motosierra_stihl_premium.jpg');
+('Kit Limpieza Motosierra Stihl Premium', 'accesorio', 'Stihl', 'Kit de limpieza y mantenimiento para motosierra', 39.00, 30, 'kit_limpieza_motosierra_stihl_premium.jpg'),
 
+-- productos añadidos a mayores
+('Calcetines con Diseño de Sushi', 'Ropa', 'SockFiesta', 'Calcetines unisex con estampado hiperrealista de nigiri, maki y sashimi. Material transpirable 80% algodón. Perfectos para confundir a tu gato o ir a una cita importante.', 8.99, 156, 'calcetines-sushi-locos.jpg'),
+
+('Almohada con Forma de Aguacate Gigante', 'Hogar', 'AvocadoDreams', 'Almohada de felpa en forma de medio aguacate con su hueso extraíble. 85cm de largo. Ideal para abrazar mientras lloras viendo series o fingir que tienes amigos.', 32.50, 23, 'almohada-aguacate-gigante.jpg'),
+
+('Paraguas Espada Samurái', 'Accesorios', 'NinjaRain', 'Paraguas resistente con mango en forma de katana samurái. Empuñadura antideslizante y mecanismo automático. No corta pero intimida. Prohibido en 3 países.', 24.99, 8, 'paraguas-katana-samurai.jpg'),
+
+('Despertador que Huye Corriendo', 'Electrónica', 'ClockRunner', 'Despertador con ruedas que escapa de ti cuando suena. Alcanza velocidad de 0.5 m/s. Garantizado para arruinar tus mañanas y mejorar tu cardio. Incluye 47 sonidos irritantes.', 41.20, 91, 'despertador-fugitivo.jpg'),
+
+('Gafas de Sol para Perros Chihuahua', 'Mascotas', 'DogSwag', 'Gafas de sol miniatura con protección UV400 y correa elástica ajustable. Tu chihuahua odiará usarlas pero se verá increíble en Instagram. Cristales polarizados anti-ardillas.', 15.75, 3, 'gafas-perro-swag.jpg');
